@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مستقبلك التعليمية | Mostaqbalak App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1027237694886593" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --bg-primary: #1a0b36;
+            --bg-card: rgba(255, 255, 255, 0.08);
+            --bg-card-hover: rgba(255, 255, 255, 0.15);
+            --accent-purple: #6c5ce7;
+            --accent-gold: #fdcb6e;
+            --accent-pink: #e84393;
+            --accent-cyan: #00cec9;
+            --accent-green: #00b894;
+            --text-main: #ffffff;
+            --text-sub: #dcdde1;
+            --border-glow: rgba(108, 92, 231, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
+
+        body {
+            background: linear-gradient(135deg, #0d061f 0%, #1a0b36 50%, #2a0845 100%);
+            color: var(--text-main); min-height: 100vh; padding-bottom: 70px; overflow-x: hidden; line-height: 1.6;
+        }
+
+        /* Splash Screen */
+        #splashScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0d061f, #2a0845);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; animation: fadeOutSplash 0.8s ease 4.2s forwards;
+        }
+        .splash-content { text-align: center; animation: bounceIn 1.2s ease; }
+        .splash-icon { font-size: 80px; color: var(--accent-gold); margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(253, 203, 110, 0.6)); }
+        .splash-title { font-size: 42px; font-weight: 900; background: linear-gradient(to right, #ffffff, var(--accent-gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .splash-subtitle { font-size: 18px; color: var(--accent-cyan); font-weight: 700; letter-spacing: 1px; margin-bottom: 30px; }
+        .splash-creators { font-size: 15px; color: var(--text-sub); background: rgba(255, 255, 255, 0.05); padding: 10px 25px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        @keyframes fadeOutSplash { to { opacity: 0; visibility: hidden; } }
+        @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* Navigation Header */
+        header {
+            background: rgba(15, 6, 32, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-glow);
+            padding: 15px 5%; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand-logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .brand-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #8e44ad, #3498db); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 0 15px rgba(142, 68, 173, 0.5); }
+        .brand-title h1 { font-size: 22px; font-weight: 900; background: linear-gradient(to right, #ffffff, #fdcb6e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .makers { font-size: 11px; color: var(--accent-cyan); font-weight: 700; margin-top: -5px; }
+        .user-stats { display: flex; gap: 15px; align-items: center; }
+        .stat-badge { background: rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.15); display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; }
+        #displayStudentName { color: var(--accent-gold); font-weight: 900; margin-left: 10px; font-size: 16px; }
+
+        /* Main Container */
+        .container { max-width: 1280px; margin: 30px auto; padding: 0 20px; }
+        .view-screen { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .view-screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Onboarding */
+        .onboarding-container { max-width: 500px; margin: 50px auto; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--accent-purple); border-radius: 24px; padding: 40px; text-align: center; box-shadow: 0 10px 40px rgba(108, 92, 231, 0.2); backdrop-filter: blur(10px); }
+        .onboarding-container h2 { font-size: 32px; margin-bottom: 10px; color: var(--accent-gold); }
+        .onboarding-container p { color: var(--text-sub); margin-bottom: 30px; font-size: 16px; }
+        .input-group { margin-bottom: 20px; text-align: right; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 700; }
+        .custom-input, .custom-select { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.2); color: white; font-size: 16px; outline: none; transition: all 0.3s ease; }
+        .custom-input:focus, .custom-select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 206, 201, 0.3); }
+        .btn-start { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--accent-purple), #8e44ad); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4); }
+
+        /* Controls Bar */
+        .controls-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 35px; }
+        .track-selector, .grade-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-tab { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-sub); padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; }
+        .btn-tab.active, .btn-tab:hover { background: linear-gradient(135deg, var(--accent-purple), #8e44ad); color: white; border-color: transparent; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); }
+
+        /* Featured Banner */
+        .featured-banner { background: linear-gradient(135deg, #00b894, #00cec9); border-radius: 24px; padding: 30px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0, 206, 201, 0.3); position: relative; overflow: hidden; cursor: pointer; transition: transform 0.3s ease; }
+        .featured-banner:hover { transform: translateY(-5px); }
+        .featured-info h2 { font-size: 28px; font-weight: 900; color: #000; margin-bottom: 8px; }
+        .featured-info p { color: #1e272e; font-weight: 800; font-size: 16px; }
+        .featured-badge-count { background: #000; color: var(--accent-gold); padding: 10px 20px; border-radius: 30px; font-weight: 900; font-size: 18px; text-align: center; }
+
+        /* Grid Layouts */
+        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .subject-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; gap: 15px; cursor: pointer; transition: all 0.3s ease; }
+        .subject-card:hover { background: var(--bg-card-hover); transform: translateY(-8px); border-color: var(--accent-purple); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .subject-card.coming-soon { opacity: 0.75; border-style: dashed; }
+        .subject-icon-box { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 28px; color: white; }
+
+        .back-btn { background: rgba(255, 255, 255, 0.1); border: none; color: white; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; transition: background 0.3s; }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .levels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-top: 20px; max-height: 65vh; overflow-y: auto; padding-right: 5px; }
+        .level-card { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease; }
+        .level-card.unlocked { border-color: var(--accent-gold); background: rgba(253, 203, 110, 0.1); }
+        .level-card.unlocked:hover { transform: scale(1.08); background: rgba(253, 203, 110, 0.25); }
+        .level-card.locked { opacity: 0.4; cursor: not-allowed; }
+        .level-number { font-size: 24px; font-weight: 900; }
+
+        /* Lesson Display */
+        .lesson-container { background: rgba(20, 10, 40, 0.95); border: 1px solid var(--accent-purple); border-radius: 24px; padding: 40px; box-shadow: 0 0 50px rgba(108, 92, 231, 0.3); }
+        .lesson-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 20px; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .lesson-timer { background: #d63031; color: white; padding: 10px 20px; border-radius: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; font-size: 15px; }
+        
+        .interactive-step { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 35px; margin-bottom: 25px; display: none; animation: fadeIn 0.5s ease; }
+        .interactive-step.active { display: block; }
+        .step-title { font-size: 26px; font-weight: 900; color: var(--accent-gold); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px dashed rgba(253, 203, 110, 0.3); padding-bottom: 15px; }
+        .step-content { font-size: 20px; line-height: 2; margin-bottom: 30px; }
+        
+        .content-box { background: rgba(0, 0, 0, 0.4); border-right: 5px solid var(--accent-cyan); padding: 25px; margin: 25px 0; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        .warning-box { background: rgba(225, 112, 85, 0.15); border: 1px solid #e17055; padding: 15px; border-radius: 10px; margin-top: 15px; color: #fab1a0; font-weight: 700; }
+        .memorize-box { background: rgba(232, 67, 147, 0.1); border: 1px dashed var(--accent-pink); padding: 25px; border-radius: 16px; margin-top: 25px; }
+        
+        .eng-word-tag { display: inline-block; background: rgba(108, 92, 231, 0.3); border: 1px solid var(--accent-cyan); padding: 8px 18px; border-radius: 10px; margin: 6px; font-weight: bold; font-size: 20px; color: #fff;}
+        .eng-word-tag span { color: var(--accent-gold); font-size: 18px;}
+
+        .action-btn { background: linear-gradient(135deg, var(--accent-purple), #8e44ad); color: white; border: none; padding: 18px 35px; border-radius: 12px; font-size: 20px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 10px; }
+        .action-btn:hover { transform: translateY(-3px); background: linear-gradient(135deg, var(--accent-cyan), #00b894); box-shadow: 0 8px 20px rgba(0, 206, 201, 0.4); }
+
+        .quiz-section { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--accent-pink); border-radius: 16px; padding: 30px; display: none; animation: fadeIn 0.5s ease; }
+        .quiz-options { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
+        .option-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 18px; border-radius: 12px; text-align: right; cursor: pointer; font-weight: 700; font-size: 18px; transition: all 0.2s; }
+        .option-btn:hover { background: rgba(108, 92, 231, 0.3); border-color: var(--accent-purple); }
+        .complete-btn { background: linear-gradient(135deg, var(--accent-green), #00b894); color: white; border: none; width: 100%; padding: 20px; border-radius: 16px; font-size: 22px; font-weight: 900; cursor: pointer; margin-top: 30px; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.4); display: none; transition: background 0.3s; }
+
+        .footer-credits { text-align: center; padding: 20px; color: var(--text-sub); font-weight: 800; font-size: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 40px; }
+        .footer-credits span { color: var(--accent-cyan); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة البداية -->
+    <div id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="splash-title">منصة مستقبلك</div>
+            <div class="splash-subtitle">Mostaqbalak App - تعلم بذكاء وعمق</div>
+            <div class="splash-creators">صناعة وتطوير: سيف وليد & ياسين احمد</div>
+        </div>
+    </div>
+
+    <!-- الشريط العلوي -->
+    <header>
+        <div class="brand-logo" onclick="goHome()">
+            <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="brand-title">
+                <h1>مستقبلك</h1>
+                <div class="makers">صناعة سيف وليد و ياسين احمد</div>
+            </div>
+        </div>
+        <div class="user-stats">
+            <span id="displayStudentName"></span>
+            <div class="stat-badge"><i class="fa-solid fa-star" style="color: #fdcb6e;"></i> <span id="xpCount">0 XP</span></div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- شاشة إدخال البيانات -->
+        <div id="onboardingView" class="view-screen">
+            <div class="onboarding-container">
+                <div style="font-size: 50px; margin-bottom: 20px;">🚀</div>
+                <h2>أهلاً بيك يا بطل!</h2>
+                <p>عشان نبدأ صح، دخل بياناتك علشان نحفظ تقدمك</p>
+                <div class="input-group">
+                    <label>اسمك إيه؟</label>
+                    <input type="text" id="studentNameInput" class="custom-input" placeholder="اكتب اسمك هنا..." autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>أنت في سنة كام؟</label>
+                    <select id="studentGradeInput" class="custom-select">
+                        <option value="1">الصف الأول</option>
+                        <option value="2">الصف الثاني</option>
+                        <option value="3">الصف الثالث</option>
+                        <option value="4">الصف الرابع</option>
+                        <option value="5">الصف الخامس</option>
+                        <option value="6">الصف السادس</option>
+                    </select>
+                </div>
+                <button class="btn-start" onclick="saveStudentData()">ابدأ رحلتك التعليمية الآن</button>
+            </div>
+        </div>
+
+        <!-- الشاشة الرئيسية -->
+        <div id="homeView" class="view-screen">
+            <div class="controls-bar">
+                <div class="track-selector">
+                    <button class="btn-tab active" onclick="switchTrack('gov', this)">عربي / حكومي</button>
+                    <button class="btn-tab" onclick="switchTrack('languages', this)">لغات (Languages)</button>
+                </div>
+                <div class="grade-selector" id="gradeTabsContainer"></div>
+            </div>
+
+            <div id="resumeContainer" style="margin-bottom: 25px; display: none;"></div>
+
+            <div class="featured-banner" onclick="openSubjectLevels('english_zero')">
+                <div class="featured-info">
+                    <h2><i class="fa-solid fa-rocket"></i> كورس الإنجليزي من تحت الصفر (-1)</h2>
+                    <p>هتتأسس صح من البداية، الشرح كله بالعربي وهنقولك تحفظ إيه وتحفظ إزاي وتفهم القواعد العميقة!</p>
+                </div>
+                <div class="featured-badge-count">
+                    150 مستوى<br><span style="font-size: 14px; color: #fff;">شرح وتسميع تصاعدي</span>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <i class="fa-solid fa-book-open" style="color: var(--accent-purple);"></i>
+                <span id="subjectsSectionTitle">المواد الدراسية (100 مستوى لكل مادة)</span>
+            </div>
+
+            <div class="subjects-grid" id="subjectsGrid"></div>
+        </div>
+
+        <!-- شاشة المستويات -->
+        <div id="levelsView" class="view-screen">
+            <button class="back-btn" onclick="showScreen('homeView')">
+                <i class="fa-solid fa-arrow-right"></i> العودة للمواد
+            </button>
+            <div id="subjectHeader" style="margin-bottom: 20px;"></div>
+            <div class="levels-grid" id="levelsGrid"></div>
+        </div>
+
+        <!-- شاشة الدرس والتفاعل -->
+        <div id="lessonView" class="view-screen">
+            <button class="back-btn" onclick="showScreen('levelsView')">
+                <i class="fa-solid fa-arrow-right"></i> إيقاف الدرس والعودة
+            </button>
+            <div class="lesson-container">
+                <div class="lesson-header">
+                    <div>
+                        <h2 id="lessonTitle" style="font-size: 30px;">المستوى</h2>
+                        <p style="color: var(--text-sub); margin-top: 5px; font-size: 18px;" id="lessonSub">المادة</p>
+                    </div>
+                    <div class="lesson-timer">
+                        <i class="fa-solid fa-stopwatch"></i>
+                        <span>المدة: من ربع لـ ساعة كاملة حسب تركيزك</span>
+                    </div>
+                </div>
+
+                <div id="interactiveStepsContainer"></div>
+
+                <div class="quiz-section" id="quizSection">
+                    <h3 style="color: var(--accent-pink); font-size: 24px;"><i class="fa-solid fa-circle-question"></i> سؤال سريع لفتح المستوى اللي بعده!</h3>
+                    <p style="margin-top: 15px; font-size: 22px; font-weight: 800;" id="quizQuestion"></p>
+                    <div class="quiz-options" id="quizOptionsContainer"></div>
+                    <button class="complete-btn" id="completeBtn" onclick="completeLevel()">إكمال وإنهاء المستوى (+50 XP) 🏆</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-credits">
+        تمت البرمجة والتطوير بواسطة <span>سيف وليد</span> و <span>ياسين احمد</span> &copy; 2024
+    </div>
+
+    <script>
+        let studentName = "";
+        let currentGrade = 1;
+        let currentTrack = 'gov'; 
+        let selectedSubject = null;
+        let currentLevel = 1;
+        let currentCorrectAnswer = 0;
+        let userXP = parseInt(localStorage.getItem('userXP')) || 0;
+
+        const subjectsListGov = [
+            { id: 'arabic', name: 'اللغة العربية', icon: 'fa-book-quran', color: '#e84393' },
+            { id: 'math', name: 'الرياضيات', icon: 'fa-calculator', color: '#0984e3' },
+            { id: 'science', name: 'العلوم', icon: 'fa-flask', color: '#00b894' },
+            { id: 'social', name: 'الدراسات الاجتماعية', icon: 'fa-earth-americas', color: '#e17055' }
+        ];
+
+        const subjectsListLanguages = [
+            { id: 'arabic', name: 'اللغة العربية', icon: 'fa-book-quran', color: '#e84393' },
+            { id: 'math_lang', name: 'Mathematics', icon: 'fa-calculator', color: '#0984e3', comingSoon: true },
+            { id: 'science_lang', name: 'Science', icon: 'fa-flask', color: '#00b894', comingSoon: true },
+            { id: 'discover_lang', name: 'Discover / Social', icon: 'fa-earth-americas', color: '#e17055', comingSoon: true }
+        ];
+
+        // بنك كلمات متكامل مع مولد ديناميكي
+        const englishWordBank = [
+            {word: "Apple", meaning: "تفاحة"}, {word: "Book", meaning: "كتاب"}, {word: "Cat", meaning: "قطة"},
+            {word: "Dog", meaning: "كلب"}, {word: "Egg", meaning: "بيضة"}, {word: "Fish", meaning: "سمكة"},
+            {word: "Goat", meaning: "ماعز"}, {word: "Hat", meaning: "قبعة"}, {word: "Ice", meaning: "ثلج"},
+            {word: "Juice", meaning: "عصير"}, {word: "Key", meaning: "مفتاح"}, {word: "Lion", meaning: "أسد"},
+            {word: "Moon", meaning: "قمر"}, {word: "Net", meaning: "شبكة"}, {word: "Owl", meaning: "بومة"},
+            {word: "Pen", meaning: "قلم جاف"}, {word: "Queen", meaning: "ملكة"}, {word: "Rain", meaning: "مطر"},
+            {word: "Sun", meaning: "شمس"}, {word: "Tree", meaning: "شجرة"}, {word: "Umbrella", meaning: "شمسية"},
+            {word: "Van", meaning: "شاحنة"}, {word: "Water", meaning: "ماء"}, {word: "X-ray", meaning: "أشعة"},
+            {word: "Yellow", meaning: "أصفر"}, {word: "Zoo", meaning: "حديقة حيوان"}, {word: "Ant", meaning: "نملة"},
+            {word: "Bear", meaning: "دب"}, {word: "Car", meaning: "سيارة"}, {word: "Door", meaning: "باب"},
+            {word: "Eye", meaning: "عين"}, {word: "Frog", meaning: "ضفدع"}, {word: "Girl", meaning: "بنت"}
+        ];
+
+        function getWordsForLevel(lvl) {
+            let countRequired = 3 + (lvl * 2); // مستوى 1 -> 5 كلمات، مستوى 2 -> 7 كلمات، ...
+            let startIndex = 0;
+            for(let i = 1; i < lvl; i++) {
+                startIndex += (3 + (i * 2));
+            }
+
+            let words = [];
+            for(let i = 0; i < countRequired; i++) {
+                let wordObj = englishWordBank[(startIndex + i) % englishWordBank.length];
+                words.push(wordObj);
+            }
+            return { count: countRequired, list: words };
+        }
+
+        function initApp() {
+            document.getElementById('xpCount').innerText = `${userXP} XP`;
+            
+            let gradeTabs = '';
+            for(let i=1; i<=6; i++) {
+                gradeTabs += `<button class="btn-tab" data-grade="${i}" onclick="switchGrade(${i}, this)">الصف ${i}</button>`;
+            }
+            document.getElementById('gradeTabsContainer').innerHTML = gradeTabs;
+
+            setTimeout(() => {
+                if (localStorage.getItem('studentName')) {
+                    studentName = localStorage.getItem('studentName');
+                    currentGrade = parseInt(localStorage.getItem('studentGrade')) || 1;
+                    document.getElementById('displayStudentName').innerText = `البطل: ${studentName}`;
+                    updateGradeTabsVisuals();
+                    renderSubjects();
+                    checkResumeProgress();
+                    showScreen('homeView');
+                } else {
+                    showScreen('onboardingView');
+                }
+            }, 4500);
+        }
+
+        function saveStudentData() {
+            const name = document.getElementById('studentNameInput').value.trim();
+            const grade = document.getElementById('studentGradeInput').value;
+            if (!name) return alert("اكتب اسمك عشان نبدأ!");
+            
+            localStorage.setItem('studentName', name);
+            localStorage.setItem('studentGrade', grade);
+            studentName = name;
+            currentGrade = parseInt(grade);
+            document.getElementById('displayStudentName').innerText = `البطل: ${studentName}`;
+            updateGradeTabsVisuals();
+            renderSubjects();
+            checkResumeProgress();
+            showScreen('homeView');
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.view-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function goHome() { if(studentName) showScreen('homeView'); }
+
+        function switchTrack(track, btn) {
+            currentTrack = track;
+            document.querySelectorAll('.track-selector .btn-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderSubjects();
+        }
+
+        function switchGrade(grade, btn) {
+            currentGrade = grade;
+            localStorage.setItem('studentGrade', grade); 
+            updateGradeTabsVisuals();
+            renderSubjects();
+            checkResumeProgress();
+        }
+
+        function updateGradeTabsVisuals() {
+            document.querySelectorAll('#gradeTabsContainer .btn-tab').forEach(tab => {
+                tab.classList.toggle('active', parseInt(tab.getAttribute('data-grade')) === currentGrade);
+            });
+        }
+
+        function checkResumeProgress() {
+            const lastSub = localStorage.getItem('lastSubject');
+            const lastLvl = localStorage.getItem('lastLevel');
+            const lastGrade = localStorage.getItem('lastGrade');
+            
+            const resumeDiv = document.getElementById('resumeContainer');
+            if (lastSub && lastLvl && lastGrade && parseInt(lastGrade) === currentGrade) {
+                let subName = lastSub === 'english_zero' ? 'تأسيس الإنجليزي' : 'المواد الدراسية';
+                resumeDiv.style.display = 'block';
+                resumeDiv.innerHTML = `
+                    <div style="background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(0, 206, 201, 0.2)); border: 1px solid var(--accent-cyan); padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <h3 style="color: var(--accent-gold); margin-bottom: 5px;"><i class="fa-solid fa-bookmark"></i> استمرار من حيث توقفت</h3>
+                            <p style="font-size: 16px; color: var(--text-sub);">أنت كنت تذاكر المستوى (${lastLvl}) في (${subName}).. كمل اللي بدأته يا بطل!</p>
+                        </div>
+                        <button class="action-btn" onclick="startLesson(${parseInt(lastLvl)}, '${lastSub}')" style="padding: 12px 25px; font-size: 16px;">
+                            <i class="fa-solid fa-play"></i> متابعة الدرس
+                        </button>
+                    </div>
+                `;
+            } else {
+                resumeDiv.style.display = 'none';
+            }
+        }
+
+        function renderSubjects() {
+            const grid = document.getElementById('subjectsGrid');
+            grid.innerHTML = '';
+            let list = currentTrack === 'gov' ? subjectsListGov : subjectsListLanguages;
+            
+            list.forEach(sub => {
+                if (sub.comingSoon) {
+                    grid.innerHTML += `<div class="subject-card coming-soon" onclick="alert('قريباً فور نزول المنهج!')"><div class="subject-icon-box" style="background: ${sub.color};"><i class="fa-solid ${sub.icon}"></i></div><h3>${sub.name}</h3><div style="color: var(--accent-gold); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-clock"></i> قريباً</div></div>`;
+                } else {
+                    grid.innerHTML += `<div class="subject-card" onclick="openSubjectLevels('${sub.id}')"><div class="subject-icon-box" style="background: ${sub.color};"><i class="fa-solid ${sub.icon}"></i></div><h3>${sub.name}</h3><div style="color: var(--text-sub); font-size: 15px; font-weight: 700;">100 مستوى تفاعلي</div></div>`;
+                }
+            });
+        }
+
+        function openSubjectLevels(subjectId) {
+            selectedSubject = subjectId;
+            const grid = document.getElementById('levelsGrid');
+            grid.innerHTML = '';
+            
+            let total = subjectId === 'english_zero' ? 150 : 100;
+            let title = subjectId === 'english_zero' ? "تأسيس الإنجليزي من الصفر (-1)" : `المادة المحددة - الصف ${currentGrade}`;
+            
+            document.getElementById('subjectHeader').innerHTML = `<h2>${title}</h2><p style="font-size: 18px; margin-top: 5px;">الدروس هنا طويلة ومحتاجة تركيز.. اختار المستوى واجهز بكشكولك.</p>`;
+            
+            let progress = parseInt(localStorage.getItem(`${subjectId}_g${currentGrade}_prog`)) || 1;
+            
+            for(let i = 1; i <= total; i++) {
+                let unlocked = i <= progress;
+                grid.innerHTML += `
+                    <div class="level-card ${unlocked ? 'unlocked' : 'locked'}" ${unlocked ? `onclick="startLesson(${i}, '${subjectId}')"` : ''}>
+                        <div class="level-number">${i}</div>
+                        <div style="font-size:12px; margin-top:5px; font-weight: bold;">${unlocked ? '🔓 متاح' : '🔒 مقفول'}</div>
+                    </div>`;
+            }
+            showScreen('levelsView');
+        }
+
+        // توليد المحتوى الديناميكي بدون أي كسر في السلاسل النصية
+        function generateDetailedContent(subjectId, level) {
+            let content = {};
+
+            if (subjectId === 'english_zero') {
+                let wordData = getWordsForLevel(level);
+                let wordsHTML = wordData.list.map(w => `<div class="eng-word-tag">${w.word} <span>(${w.meaning})</span></div>`).join('');
+                
+                if (level === 1) {
+                    content.explain = `<div class="content-box">
+                        <strong>درس اليوم: المجموعة الأولى من الحروف (A, B, C, D) بالتفصيل الدقيق:</strong><br><br>
+                        السر كله في الإنجليزي إنك تحفظ (صوت الحرف) مش اسمه!<br><br>
+                        - حرف الـ A صوته (آآآ).<br>
+                        - حرف الـ B صوته (بـ).<br>
+                        - حرف الـ C صوته الأغلب (كـ).<br>
+                        - حرف الـ D صوته (د).
+                    </div>`;
+                    content.q = "المعلومة الأهم: حرف الـ C في أغلب كلماته (زي Cat) صوته بيتنطق إيه؟";
+                    content.ans = ["بيتنطق (كـ) زي حرف الـ K", "بيتنطق (سـ) دايماً", "بيتنطق (شـ)"];
+                    content.correct = 0;
+                } else if (level === 2) {
+                    content.explain = `<div class="content-box">
+                        <strong>درس اليوم: المجموعة الثانية من الحروف (E, F, G, H):</strong><br><br>
+                        - حرف الـ E صوته (إيـ) مكسور.<br>
+                        - حرف الـ F صوته (فـ).<br>
+                        - حرف الـ G صوته (جـ) زي الجيم المصرية.<br>
+                        - حرف الـ H صوته (هـ).
+                    </div>`;
+                    content.q = "ما هو الصوت الأغلب لحرف الـ G ؟";
+                    content.ans = ["صوت الجيم المصرية (جـ)", "صوت الشين", "صوت الطاء"];
+                    content.correct = 0;
+                } else {
+                    content.explain = `<div class="content-box">
+                        <strong>شرح المستوى رقم ${level}:</strong><br><br>
+                        في هذا المستوى يتم التدرب على القواعد والقراءة السريعة للكلمات والتأكد من نطق الأصوات المركبة بشكل ممتاز.
+                    </div>`;
+                    content.q = `سؤال اختبار للمستوى ${level}: هل أنت مستعد للتقدم؟`;
+                    content.ans = ["نعم مستعد للتقدم", "لا", "غير جاهز"];
+                    content.correct = 0;
+                }
+
+                content.memorize = `<strong>📝 مطلوب منك تحفظ ( ${wordData.count} كلمات ) بالظبط النهارده:</strong><br>
+                <div style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 5px;">${wordsHTML}</div>`;
+                
+                content.howTo = `<strong>🧠 طريقة الحفظ العملية:</strong> اكتب كل كلمة 5 مرات في الكشكول وانطقها بصوت عالي وأنت بتكتب.`;
+                content.guardianText = `نادي لماما أو بابا وخليهم يسمعولك الـ <strong>( ${wordData.count} كلمات )</strong> اللي حفظتهم نطق وكتابة.`;
+
+            } else {
+                content.explain = `<div class="content-box">
+                    <strong>شرح درس المستوى ${level}:</strong><br><br>
+                    مرحباً بك في درس المادة المحددة. قم بقراءة الملاحظات التالية بتركيز وكتابتها في كشكولك الخاص.
+                </div>`;
+                content.memorize = `<strong>📝 المطلوب حفظه للمستوى ${level}:</strong> احفظ المفاهيم الرئيسية والتعريفات الموجودة في درس اليوم.`;
+                content.howTo = `<strong>🧠 طريقة المذاكرة:</strong> تلخيص النقاط الأساسية في كشكول المذاكرة.`;
+                content.guardianText = `استدعِ ولي أمرك لمراجعة الملاحظات والتعريفات معك.`;
+                content.q = `سؤال للمستوى ${level}: هل أنجزت المذاكرة بشكل كامل؟`;
+                content.ans = ["نعم أنجزت المذاكرة", "ليس بعد", "سأحاول مجدداً"];
+                content.correct = 0;
+            }
+
+            return content;
+        }
+
+        function startLesson(level, subjectId) {
+            currentLevel = level;
+            selectedSubject = subjectId;
+            localStorage.setItem('lastSubject', subjectId);
+            localStorage.setItem('lastLevel', level);
+            localStorage.setItem('lastGrade', currentGrade);
+
+            let subName = subjectId === 'english_zero' ? "تأسيس الإنجليزي" : "المواد الدراسية";
+            
+            document.getElementById('lessonTitle').innerText = `المستوى ${level}`;
+            document.getElementById('lessonSub').innerText = subName;
+
+            const content = generateDetailedContent(subjectId, level);
+
+            const stepsHtml = `
+                <div class="interactive-step active" id="step_1">
+                    <div class="step-title"><i class="fa-solid fa-pen-fancy"></i> 1. جهز أدواتك يا بطل</div>
+                    <div class="step-content">هات الكشكول بتاعك وقلمك. ممنوع تقرأ بعينك بس، اللي بيتكتب هو اللي بيثبت في الدماغ.</div>
+                    <button class="action-btn" onclick="nextStep(2)">جاهز ومعايا الكشكول <i class="fa-solid fa-check"></i></button>
+                </div>
+
+                <div class="interactive-step" id="step_2">
+                    <div class="step-title"><i class="fa-solid fa-brain"></i> 2. ركز في الشرح ده جداً</div>
+                    <div class="step-content">${content.explain}</div>
+                    <button class="action-btn" onclick="nextStep(3)">فهمت الشرح كويس جداً <i class="fa-solid fa-arrow-down"></i></button>
+                </div>
+
+                <div class="interactive-step" id="step_3">
+                    <div class="step-title"><i class="fa-solid fa-list-check"></i> 3. فقرة الحفظ والتطبيق</div>
+                    <div class="step-content">
+                        <div class="memorize-box">${content.memorize}</div>
+                        <div style="margin-top:20px; font-size:18px;">${content.howTo}</div>
+                    </div>
+                    <button class="action-btn" onclick="nextStep(4)">كتبتهم وحفظتهم تماماً <i class="fa-solid fa-lock"></i></button>
+                </div>
+
+                <div class="interactive-step" id="step_4" style="border: 2px solid var(--accent-pink); background: rgba(232, 67, 147, 0.05);">
+                    <div class="step-title" style="color: var(--accent-pink); border-bottom-color: var(--accent-pink);"><i class="fa-solid fa-user-shield"></i> 4. اختبار ولي الأمر</div>
+                    <div class="step-content">
+                        <strong>⚠️ خطوة إجبارية:</strong><br>
+                        ${content.guardianText}
+                    </div>
+                    <button class="action-btn" style="background: linear-gradient(135deg, var(--accent-pink), #d63031);" onclick="openQuiz()">تم التسميع بنجاح <i class="fa-solid fa-thumbs-up"></i></button>
+                </div>
+            `;
+
+            document.getElementById('interactiveStepsContainer').innerHTML = stepsHtml;
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('completeBtn').style.display = 'none';
+            
+            document.getElementById('quizQuestion').innerText = content.q;
+            currentCorrectAnswer = content.correct;
+            
+            let optsHtml = '';
+            content.ans.forEach((opt, idx) => {
+                optsHtml += `<button class="option-btn" onclick="checkAnswer(${idx}, this)">${opt}</button>`;
+            });
+            document.getElementById('quizOptionsContainer').innerHTML = optsHtml;
+
+            showScreen('lessonView');
+        }
+
+        function nextStep(stepNum) {
+            document.querySelectorAll('.interactive-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step_' + stepNum).classList.add('active');
+        }
+
+        function openQuiz() {
+            document.querySelectorAll('.interactive-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('quizSection').style.display = 'block';
+        }
+
+        function checkAnswer(selectedIdx, btn) {
+            document.querySelectorAll('.option-btn').forEach(b => {
+                b.style.background = 'rgba(255,255,255,0.08)';
+                b.style.borderColor = 'rgba(255,255,255,0.1)';
+            });
+
+            if(selectedIdx === currentCorrectAnswer) {
+                btn.style.background = 'rgba(0, 184, 148, 0.2)';
+                btn.style.borderColor = 'var(--accent-green)';
+                document.getElementById('completeBtn').style.display = 'block';
+            } else {
+                btn.style.background = 'rgba(214, 48, 49, 0.2)';
+                btn.style.borderColor = '#d63031';
+                document.getElementById('completeBtn').style.display = 'none';
+            }
+        }
+
+        function completeLevel() {
+            let progressKey = `${selectedSubject}_g${currentGrade}_prog`;
+            let currentProg = parseInt(localStorage.getItem(progressKey)) || 1;
+            
+            if(currentLevel >= currentProg) {
+                localStorage.setItem(progressKey, currentLevel + 1);
+            }
+
+            userXP += 50;
+            localStorage.setItem('userXP', userXP);
+            document.getElementById('xpCount').innerText = `${userXP} XP`;
+            
+            localStorage.removeItem('lastSubject');
+
+            alert(`مبروك يا ${studentName}! كسبت 50 نقطة خبرة 🏆\nمستواك بيطور بسرعة!`);
+            openSubjectLevels(selectedSubject);
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
